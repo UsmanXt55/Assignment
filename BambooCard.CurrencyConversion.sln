@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34723.18
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BambooCard.CurrencyConversion.API", "BambooCard.CurrencyConversion.API\BambooCard.CurrencyConversion.API.csproj", "{D19E18F2-1705-48CB-8433-309517802874}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BambooCard.CurrencyConversion.Models", "BambooCard.CurrencyConversion.Models\BambooCard.CurrencyConversion.Models.csproj", "{B88C0B2D-3037-464D-BDD4-D941369BED85}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BambooCard.CurrencyConversion.UnitTest", "BambooCard.CurrencyConversion.UnitTest\BambooCard.CurrencyConversion.UnitTest.csproj", "{0ACAEFEE-4FB1-41D9-B6B6-B70790AFA93A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D19E18F2-1705-48CB-8433-309517802874}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D19E18F2-1705-48CB-8433-309517802874}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D19E18F2-1705-48CB-8433-309517802874}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D19E18F2-1705-48CB-8433-309517802874}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B88C0B2D-3037-464D-BDD4-D941369BED85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B88C0B2D-3037-464D-BDD4-D941369BED85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B88C0B2D-3037-464D-BDD4-D941369BED85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B88C0B2D-3037-464D-BDD4-D941369BED85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0ACAEFEE-4FB1-41D9-B6B6-B70790AFA93A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0ACAEFEE-4FB1-41D9-B6B6-B70790AFA93A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0ACAEFEE-4FB1-41D9-B6B6-B70790AFA93A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0ACAEFEE-4FB1-41D9-B6B6-B70790AFA93A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F6C9F6B0-AFC7-4EC9-B858-071D69B991D1}
+	EndGlobalSection
+EndGlobal

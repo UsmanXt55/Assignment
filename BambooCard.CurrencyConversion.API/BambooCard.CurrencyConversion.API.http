@@ -1,0 +1,18 @@
+@BambooCard.CurrencyConversion.API_HostAddress = https://localhost:7122
+
+GET {{BambooCard.CurrencyConversion.API_HostAddress}}/api/v1.0/currency-converter/USD/
+Accept: application/json
+
+###
+
+
+GET {{BambooCard.CurrencyConversion.API_HostAddress}}/api/v1.0/currency-converter/convert?from=USD&to=GBP&amount=10
+Accept: application/json
+
+###
+
+
+GET {{BambooCard.CurrencyConversion.API_HostAddress}}/api/v1.0/currency-converter/GBP/historical?startDate=2020-01-01&endDate=2020-01-02&pageNumber=1
+Accept: application/json
+
+###
