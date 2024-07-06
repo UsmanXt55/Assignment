@@ -33,11 +33,11 @@ public class ExchangeRateService : IExchangeRateService
     {
         try
         {
-            var response = await _client.GetAsync(string.Format("latest?from={0}", baseCurrency));
+            var response = await _client.GetAsync(string.Format("latest?from={0}", baseCurrency), cancellationToken);
             if (!response.IsSuccessStatusCode)
                 return new(false, "Not found");
 
-            var responseContent = await response.Content.ReadAsStringAsync();
+            var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
             var rates = JsonConvert.DeserializeObject<RatesDto>(responseContent);
 
             return new(true, "Rates fetched", rates);
@@ -60,11 +60,11 @@ public class ExchangeRateService : IExchangeRateService
             }
             if (!isCacheFound)
             {
-                var response = await _client.GetAsync(string.Format("{0}..{1}?from={2}", periodStart.FormatAsDate(), periodEnd.FormatAsDate(), baseCurrency));
+                var response = await _client.GetAsync(string.Format("{0}..{1}?from={2}", periodStart.FormatAsDate(), periodEnd.FormatAsDate(), baseCurrency), cancellationToken);
                 if (!response.IsSuccessStatusCode)
                     return new(false, "Not found");
 
-                var responseContent = await response.Content.ReadAsStringAsync();
+                var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
                 rates = JsonConvert.DeserializeObject<HistoricalRatesDto>(responseContent)!;
 
                 SetCache(cacheKey, rates!);
@@ -104,11 +104,11 @@ public class ExchangeRateService : IExchangeRateService
             if (_restrictedCurrencyList.Contains(fromCurrency) || _restrictedCurrencyList.Contains(toCurrency))
                 return new(false, "Currency conversion for provided currency is not allowed.");
 
-            var response = await _client.GetAsync(string.Format("latest?amount={2}&from={0}&to={1}", fromCurrency, toCurrency, amount));
+            var response = await _client.GetAsync(string.Format("latest?amount={2}&from={0}&to={1}", fromCurrency, toCurrency, amount), cancellationToken);
             if (!response.IsSuccessStatusCode)
                 return new(false, "Not found");
 
-            var responseContent = await response.Content.ReadAsStringAsync();
+            var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
             var rates = JsonConvert.DeserializeObject<RatesDto>(responseContent);
 
             return new(true, "Conversion fetched", rates);
