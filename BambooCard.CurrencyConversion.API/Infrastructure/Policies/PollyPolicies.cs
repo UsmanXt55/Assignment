@@ -3,14 +3,14 @@ using System.Net;
 namespace BambooCard.CurrencyConversion.API.Infrastructure.Policies;
 public static class PollyPolicies
 {
-    public static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+    public static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(int failoverRetryCount)
     {
         return Policy.HandleResult<HttpResponseMessage>(result =>
         {
             return result.IsSuccessStatusCode == false &&
                    IsTransientError(result.StatusCode);
         })
-           .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+           .WaitAndRetryAsync(failoverRetryCount, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
     }
 
     private static bool IsTransientError(HttpStatusCode statusCode)

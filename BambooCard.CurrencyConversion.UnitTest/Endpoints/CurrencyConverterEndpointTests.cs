@@ -103,6 +103,46 @@ public class CurrencyConverterEndpointTests
         //Assert
         Assert.IsType<BadRequestObjectResult>(result);
     }
-   
+
+    [Theory]
+    [InlineData("TRY")]
+    [InlineData("PLN")]
+    [InlineData("THB")]
+    [InlineData("MXN")]
+    public async Task Convert_ShouldReturn400BadRequestWhenRestrictedCurrencyPassedAsFrom(string fromCurrency)
+    {
+        //Arrange
+        var toCurrency = "GBP";
+        var amount = 1m;
+        var serviceResultMoq = new ServiceResult(false, "Validation failed");
+        _mockService.Setup(s => s.ConvertAsync(fromCurrency, toCurrency, amount, CancellationToken.None)).ReturnsAsync(serviceResultMoq);
+
+        //Act
+        var result = await _controller.Convert(fromCurrency, toCurrency, amount, CancellationToken.None);
+
+        //Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Theory]
+    [InlineData("TRY")]
+    [InlineData("PLN")]
+    [InlineData("THB")]
+    [InlineData("MXN")]
+    public async Task Convert_ShouldReturn400BadRequestWhenRestrictedCurrencyPassedAsTo(string toCurrency)
+    {
+        //Arrange
+        var fromCurrency = "GBP";
+        var amount = 1m;
+        var serviceResultMoq = new ServiceResult(false, "Validation failed");
+        _mockService.Setup(s => s.ConvertAsync(fromCurrency, toCurrency, amount, CancellationToken.None)).ReturnsAsync(serviceResultMoq);
+
+        //Act
+        var result = await _controller.Convert(fromCurrency, toCurrency, amount, CancellationToken.None);
+
+        //Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
     #endregion
 }

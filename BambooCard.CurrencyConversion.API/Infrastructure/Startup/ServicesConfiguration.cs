@@ -1,6 +1,7 @@
 ﻿using BambooCard.CurrencyConversion.API.Infrastructure.Constants;
 using BambooCard.CurrencyConversion.API.Infrastructure.Policies;
 using BambooCard.CurrencyConversion.API.Services;
+using Microsoft.Extensions.Caching.Memory;
 namespace BambooCard.CurrencyConversion.API.Infrastructure.Startup;
 public static class ServicesConfiguration
 {
@@ -18,9 +19,15 @@ public static class ServicesConfiguration
         builder.Services.AddHttpClient(ApiClientConstants.ExchangeRateService, client =>
         {
             client.BaseAddress = new Uri(configuration.GetSection("AppConfiguration:FxBaseUrl").Value!);
-        }).AddPolicyHandler(PollyPolicies.GetRetryPolicy());
+        }).AddPolicyHandler(PollyPolicies.GetRetryPolicy(
+            Convert.ToInt32(configuration.GetSection(ConfigurationConstants.FailoverRetryCount).Value)));
 
-        builder.Services.AddTransient<IExchangeRateService, ExchangeRateService>();
+        builder.Services.AddScoped<ExchangeRateService>();
+        builder.Services.AddScoped<IExchangeRateService>(provider => {
+            var exchangeRateService = provider.GetRequiredService<ExchangeRateService>();
+            var cache = provider.GetRequiredService<IMemoryCache>();
+            return new CachedExchangeRateService(exchangeRateService, cache, configuration);
+        });
 
         return builder;
     }

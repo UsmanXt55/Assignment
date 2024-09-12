@@ -16,17 +16,15 @@ public class ExchangeRateService : IExchangeRateService
 {
     private readonly HttpClient _client;
     private readonly List<string> _restrictedCurrencyList;
-    private readonly IMemoryCache _cache;
+    private readonly IConfiguration _configuration;
     public ExchangeRateService(
         IHttpClientFactory httpClientFactory,
-        IMemoryCache cache)
+        IConfiguration configuration)
     {
         _client = httpClientFactory.CreateClient(ApiClientConstants.ExchangeRateService);
-        _cache = cache;
-        _restrictedCurrencyList = new List<string>()
-        {
-            "TRY", "PLN", "THB", "MXN"
-        };
+        _configuration = configuration;
+        var restrictedCurrencies = configuration.GetSection(ConfigurationConstants.ExcludedCurrencies).Value!.Trim().Split(',');
+        _restrictedCurrencyList = new List<string>(restrictedCurrencies);
     }
 
     public async Task<ServiceResult> GetAsync(string baseCurrency, CancellationToken cancellationToken)
@@ -51,46 +49,13 @@ public class ExchangeRateService : IExchangeRateService
     {
         try
         {
-            var cacheKey = $"key_{baseCurrency}_{periodStart.FormatAsDateString()}_{periodEnd.FormatAsDateString()}";
-            HistoricalRatesDto rates;
-            bool isCacheFound = false;
-            if (_cache.TryGetValue(cacheKey, out rates!))
-            {
-                isCacheFound = true;
-            }
-            if (!isCacheFound)
-            {
-                var response = await _client.GetAsync(string.Format("{0}..{1}?from={2}", periodStart.FormatAsDate(), periodEnd.FormatAsDate(), baseCurrency), cancellationToken);
-                if (!response.IsSuccessStatusCode)
-                    return new(false, "Not found");
+            var response = await _client.GetAsync(string.Format("{0}..{1}?from={2}", periodStart.FormatAsDate(), periodEnd.FormatAsDate(), baseCurrency), cancellationToken);
+            if (!response.IsSuccessStatusCode)
+                return new(false, "Not found");
 
-                var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
-                rates = JsonConvert.DeserializeObject<HistoricalRatesDto>(responseContent)!;
-
-                SetCache(cacheKey, rates!);
-            }
-
-            bool hasNextPage = false;
-            int totalPages = 1;
-            int currentPage = 1;
-
-            if (rates.Rates.Count() > 1)
-            {
-                hasNextPage = true;
-                totalPages = rates.Rates.Count();
-            }
-
-            pageNumber = pageNumber <= 0 ? 1 : pageNumber;
-            if (pageNumber > totalPages)
-                return new(false, $"Page # {pageNumber} not found");
-            hasNextPage = !(pageNumber == totalPages);
-            currentPage = pageNumber;
-
-            Dictionary<string, Dictionary<string, double>> pagedRate = new();
-            pagedRate.Add(rates.Rates.ElementAt(currentPage - 1).Key, rates.Rates.ElementAt(currentPage - 1).Value);
-            HistoricalRatesDto responseDto = new(rates.Amount, rates.Base, hasNextPage, totalPages, currentPage, pagedRate);
-
-            return new(true, "Historical rates fetched", responseDto);
+            var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
+            var rates = JsonConvert.DeserializeObject<HistoricalRatesDto>(responseContent)!;
+            return new(true, "", rates);
         }
         catch (Exception)
         {
@@ -119,11 +84,5 @@ public class ExchangeRateService : IExchangeRateService
         }
     }
 
-    private void SetCache(string cacheKey, HistoricalRatesDto dto)
-    {
-        _cache.Set(cacheKey, dto, new MemoryCacheEntryOptions
-        {
-            SlidingExpiration = TimeSpan.FromMinutes(5)
-        });
-    }
+    
 }
